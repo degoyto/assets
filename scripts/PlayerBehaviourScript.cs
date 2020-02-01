@@ -91,7 +91,7 @@ public class PlayerBehaviourScript : MonoBehaviour
         if(taComItem && Input.GetKeyDown(KeyCode.Space)){
             
             Debug.Log("soltou o item mesmo");
-            item.criaItem(objeto, GOitem);
+            item.criaItem(objeto, GOitem , new Vector2(rb2d.velocity.x,rb2d.velocity.y ));
             taComItem=false;
             GOitem.GetComponent<SpriteRenderer>().sprite = null;
         }
