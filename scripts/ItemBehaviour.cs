@@ -30,4 +30,10 @@ public class ItemBehaviour : MonoBehaviour
             this.GetComponent<Rigidbody2D>().gravityScale=1.0f;
         }
     }
+    public void criaItem(GameObject objeto, GameObject GOitem){
+        float posiX = GOitem.transform.position.x;
+        float posiY = GOitem.transform.position.y;
+        float posiZ = GOitem.transform.position.z;
+        Instantiate(objeto, new Vector3(posiX + 0.1f, posiY+0.1f, posiZ + 0.1f), Quaternion.identity);
+    }
 }

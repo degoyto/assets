@@ -13,6 +13,7 @@ public class PlayerBehaviourScript : MonoBehaviour
     float moveHorizontal; 
     private bool canjump,jumping;
     private bool gettingItem=false;
+    private bool taComItem=false;
     public Transform groundCheck;
     public PlayerState myState = PlayerState.esperando;     // Estado inicial do player
     public enum PlayerState                                 // Enumerador de estados do player (pode aumentar)
@@ -21,7 +22,7 @@ public class PlayerBehaviourScript : MonoBehaviour
     private Rigidbody2D rb2d;        //Store a reference to the Rigidbody2D component required to use 2D Physics.
     public ItemBehaviour itemOver,item;
 
-    public GameObject GOitem; 
+    public GameObject GOitem, objeto, objetoOver, clone; 
 
     public string itemNome;
     
@@ -67,19 +68,34 @@ public class PlayerBehaviourScript : MonoBehaviour
              rb2d.AddForce((Vector2.up) * jumpPower, ForceMode2D.Impulse);
              jumping=false;
         }
-
+        
+        
+        
         // Pode usar o Input.GetButtonDown("Jump")
-        if(gettingItem && Input.GetKey(KeyCode.Space)){
+        if(gettingItem && Input.GetKeyUp(KeyCode.Space)){
              
-             Debug.Log("pegou o item mesmo");
-             item=itemOver;
-             itemNome=item.nome;
-             item.pegaItem();
-             gettingItem = false;
-
-             GOitem.GetComponent<SpriteRenderer>().sprite= item.icone;
+            Debug.Log("pegou o item mesmo");
+            item=itemOver;
+            
+            
+            itemNome=item.nome;
+            item.pegaItem();
+            objeto = EGR.instance.itens[item.id-1];
+            Debug.Log(objeto);
+            gettingItem = false;
+            taComItem = true;
+            
+            GOitem.GetComponent<SpriteRenderer>().sprite= item.icone;
             
         }
+        if(taComItem && Input.GetKeyDown(KeyCode.Space)){
+            
+            Debug.Log("soltou o item mesmo");
+            item.criaItem(objeto, GOitem);
+            taComItem=false;
+            GOitem.GetComponent<SpriteRenderer>().sprite = null;
+        }
+        
 
         //Use the two store floats to create a new Vector2 variable movement.
         Vector2 movement = new Vector2 (moveHorizontal,0f);
@@ -109,14 +125,16 @@ public class PlayerBehaviourScript : MonoBehaviour
         //     Debug.Log("teste");
         // }
         if(other.gameObject.CompareTag("TAGitem")){
-            Debug.Log(other.GetComponent<ItemBehaviour>());
+            
             itemOver=other.GetComponent<ItemBehaviour>();
+            objetoOver = other.gameObject;
+            
             gettingItem = true;
         }    
     }
     private void OnTriggerExit2D(Collider2D other){
         itemOver=null;
-
+        gettingItem = false;
     }
     public bool InteragirButtonPress(){
         return Input.GetButtonDown("Fire1");
