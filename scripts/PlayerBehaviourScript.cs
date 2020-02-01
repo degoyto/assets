@@ -17,15 +17,20 @@ public class PlayerBehaviourScript : MonoBehaviour
     public PlayerState myState = PlayerState.esperando;     // Estado inicial do player
     public enum PlayerState                                 // Enumerador de estados do player (pode aumentar)
     { esperando, normal, interagindo, andando, pulando }
-    public ObjetoInterativo objInterativo; 
+     
     private Rigidbody2D rb2d;        //Store a reference to the Rigidbody2D component required to use 2D Physics.
-    private ItemBehaviour item;
+    public ItemBehaviour itemOver,item;
+
+    public GameObject GOitem; 
+
+    public string itemNome;
     
     // Use this for initialization
     void Start()
     {
         //Get and store a reference to the Rigidbody2D component so that we can access it.
         rb2d = GetComponent<Rigidbody2D> ();
+        GOitem= this.transform.GetChild(0).gameObject;
         
     }
 
@@ -67,8 +72,13 @@ public class PlayerBehaviourScript : MonoBehaviour
         if(gettingItem && Input.GetKey(KeyCode.Space)){
              
              Debug.Log("pegou o item mesmo");
+             item=itemOver;
+             itemNome=item.nome;
              item.pegaItem();
              gettingItem = false;
+
+             GOitem.GetComponent<SpriteRenderer>().sprite= item.icone;
+            
         }
 
         //Use the two store floats to create a new Vector2 variable movement.
@@ -100,10 +110,13 @@ public class PlayerBehaviourScript : MonoBehaviour
         // }
         if(other.gameObject.CompareTag("TAGitem")){
             Debug.Log(other.GetComponent<ItemBehaviour>());
-            item=other.GetComponent<ItemBehaviour>();
+            itemOver=other.GetComponent<ItemBehaviour>();
             gettingItem = true;
-        }  
-          
+        }    
+    }
+    private void OnTriggerExit2D(Collider2D other){
+        itemOver=null;
+
     }
     public bool InteragirButtonPress(){
         return Input.GetButtonDown("Fire1");
