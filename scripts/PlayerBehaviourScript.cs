@@ -59,7 +59,7 @@ public class PlayerBehaviourScript : MonoBehaviour
 
         //Store the current horizontal input in the float moveHorizontal.
             //if(jumping)
-                moveHorizontal = Input.GetAxis ("Horizontal");
+                
 
         //jump
        
@@ -102,10 +102,20 @@ public class PlayerBehaviourScript : MonoBehaviour
         }
         
 
-        //Use the two store floats to create a new Vector2 variable movement.
-        Vector2 movement = new Vector2 (moveHorizontal,0f);
-        //Call the AddForce function of our Rigidbody2D rb2d supplying movement multiplied by speed to move our player.
-        rb2d.AddForce (movement * speed);
+        //move horizontalmente
+        moveHorizontal = Input.GetAxis ("Horizontal");
+        Vector2 movement = new Vector2 (moveHorizontal,0f);        
+        rb2d.AddForce (movement * speed*2);
+
+
+       if(moveHorizontal == 0 && rb2d.velocity.x>0){
+           rb2d.velocity=new Vector2(rb2d.velocity.x - 0.3f ,rb2d.velocity.y);
+       }
+       if(moveHorizontal == 0 && rb2d.velocity.x<0){
+           rb2d.velocity=new Vector2(rb2d.velocity.x + 0.3f ,rb2d.velocity.y);
+       }
+            
+        Debug.Log(moveHorizontal.ToString());
 
         if(rb2d.velocity.x > 4.5f){
             rb2d.velocity=new Vector2 (4.5f,rb2d.velocity.y);
