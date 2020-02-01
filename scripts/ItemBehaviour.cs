@@ -9,7 +9,8 @@ public class ItemBehaviour : MonoBehaviour
     public string nome;
     public string descricao;
     public Sprite icone;
-
+    public int tempo;
+    public bool podePegar=true;
     private Rigidbody2D rb2d;
     
 
@@ -23,7 +24,12 @@ public class ItemBehaviour : MonoBehaviour
         
     }
     public void Update(){
-
+        if (tempo==0){
+            podePegar=true;
+        }
+        else{
+            tempo=tempo-1;
+        }
         if (rb2d.velocity.x<0.5f && rb2d.velocity.x>-0.05f){
             rb2d.velocity=new Vector2 (0,rb2d.velocity.y);
         }
@@ -63,7 +69,9 @@ public class ItemBehaviour : MonoBehaviour
         float posiY = GOitem.transform.position.y;
         float posiZ = GOitem.transform.position.z;
         GameObject myObjeto = Instantiate(objeto, new Vector3(posiX + 0.1f, posiY+0.1f, posiZ + 0.1f), Quaternion.identity);
-        myObjeto.GetComponent<Rigidbody2D>().AddForce(playerSpeed*1.5f,ForceMode2D.Impulse);
+        myObjeto.GetComponent<Rigidbody2D>().AddForce(playerSpeed*1.8f,ForceMode2D.Impulse);
+        myObjeto.GetComponent<ItemBehaviour>().podePegar = false;
+        myObjeto.GetComponent<ItemBehaviour>().tempo = 60;
         
     }
 }

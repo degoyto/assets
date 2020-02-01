@@ -75,22 +75,27 @@ public class PlayerBehaviourScript : MonoBehaviour
         if(gettingItem && Input.GetKeyUp(KeyCode.Space)){
              
             Debug.Log("pegou o item mesmo");
-            item=itemOver;
+            if (itemOver.podePegar){
+                item=itemOver;
+                itemNome=item.nome;
+                item.pegaItem();
+                objeto = EGR.instance.itens[item.id-1];
+                Debug.Log(objeto);
+                gettingItem = false;
+                taComItem = true;
+                
+                GOitem.GetComponent<SpriteRenderer>().sprite= item.icone;
+            }
             
             
-            itemNome=item.nome;
-            item.pegaItem();
-            objeto = EGR.instance.itens[item.id-1];
-            Debug.Log(objeto);
-            gettingItem = false;
-            taComItem = true;
             
-            GOitem.GetComponent<SpriteRenderer>().sprite= item.icone;
+            
             
         }
         if(taComItem && Input.GetKeyDown(KeyCode.Space)){
             
             Debug.Log("soltou o item mesmo");
+            
             item.criaItem(objeto, GOitem , new Vector2(rb2d.velocity.x,rb2d.velocity.y ));
             taComItem=false;
             GOitem.GetComponent<SpriteRenderer>().sprite = null;
