@@ -12,6 +12,8 @@ public class ItemBehaviour : MonoBehaviour
     public int tempo;
     public bool podePegar=true;
     private Rigidbody2D rb2d;
+
+    public string estado;
     
 
     public void Start(){
@@ -30,18 +32,24 @@ public class ItemBehaviour : MonoBehaviour
         else{
             tempo=tempo-1;
         }
+
+
+        if(rb2d.velocity.x > 4.5f){
+            rb2d.velocity=new Vector2 (4.5f,rb2d.velocity.y);
+
+        }
+        else if(rb2d.velocity.x < -4.5f){
+            rb2d.velocity=new Vector2 (-4.5f,rb2d.velocity.y);
+
+        }
+
         if (rb2d.velocity.x<0.5f && rb2d.velocity.x>-0.05f){
             rb2d.velocity=new Vector2 (0,rb2d.velocity.y);
         }
-
         else if(rb2d.velocity.x>0.0f)
             rb2d.velocity=new Vector2 (rb2d.velocity.x-0.1f,rb2d.velocity.y);
         else if(rb2d.velocity.x<0.0f)
-            rb2d.velocity=new Vector2 (rb2d.velocity.x+0.1f,rb2d.velocity.y);
-        
-        
-        
-
+            rb2d.velocity=new Vector2 (rb2d.velocity.x+0.1f,rb2d.velocity.y);   
     }
 
     private void OnTriggerEnter2D(Collider2D other){
@@ -72,6 +80,7 @@ public class ItemBehaviour : MonoBehaviour
         myObjeto.GetComponent<Rigidbody2D>().AddForce(playerSpeed*1.8f,ForceMode2D.Impulse);
         myObjeto.GetComponent<ItemBehaviour>().podePegar = false;
         myObjeto.GetComponent<ItemBehaviour>().tempo = 60;
+        myObjeto.GetComponent<ItemBehaviour>().estado = objeto.GetComponent<ItemBehaviour>().estado;
         
     }
 }
