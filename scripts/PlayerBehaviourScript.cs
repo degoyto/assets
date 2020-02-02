@@ -33,8 +33,10 @@ public class PlayerBehaviourScript : MonoBehaviour
     private MachineBehaviour maquinaover,maquina;
 
     float last;
-
+    public Animacao animador;
+    Vector3 flipScale;
     
+    public bool andando;
 
     
     
@@ -44,13 +46,25 @@ public class PlayerBehaviourScript : MonoBehaviour
         //Get and store a reference to the Rigidbody2D component so that we can access it.
         rb2d = GetComponent<Rigidbody2D> ();
         GOitem= this.transform.GetChild(0).gameObject;
-        
+        animador=this.GetComponent<Animacao>();
+        flipScale = transform.localScale;
     }
 
 
     void Update(){
         PlayerPermission();
-
+        if(Input.GetAxis ("Horizontal")!=0.0f){
+            if(!andando){
+                andando=true;
+                AudioManager.instance.Play("Andar");
+            }
+        }
+            if(Input.GetAxis ("Horizontal")==0.0f){
+                if(andando){
+                andando=false;
+                AudioManager.instance.Stop("Andar");
+            }
+        }
     }
     private void PlayerPermission(){
         switch(myState){
@@ -82,7 +96,7 @@ public class PlayerBehaviourScript : MonoBehaviour
         // Pode usar o Input.GetButtonDown("Jump")
         if(gettingItem && Input.GetKeyUp(KeyCode.Space) ){
              
-            Debug.Log("pegou o item mesmo");
+            
             if (itemOver.podePegar){
                 item=itemOver;
                 itemNome=item.nome;
@@ -92,7 +106,7 @@ public class PlayerBehaviourScript : MonoBehaviour
                
                 gettingItem = false;
                 taComItem = true;
-                
+                animador.seguraItem();
                 objeto.GetComponent<ItemBehaviour>().estado= item.estado;
                 GOitem.GetComponent<SpriteRenderer>().sprite= item.icone;
 
@@ -106,8 +120,8 @@ public class PlayerBehaviourScript : MonoBehaviour
         }
 
         if(taComItem && tanamaquina && Input.GetKeyDown(KeyCode.Space)){
+            animador.soltaItem();
             
-            Debug.Log("VAI BOTA NA MAQUINA");
             maquina=maquinaover;
             if(maquina.esquentarItem(objeto)){
                 taComItem=false;
@@ -132,9 +146,25 @@ public class PlayerBehaviourScript : MonoBehaviour
         Vector2 movement = new Vector2 (moveHorizontal,0f);        
         rb2d.AddForce (movement * speed*2);
 
-    if(moveHorizontal!=0)
+    if(moveHorizontal!=0){
         last=moveHorizontal;
-        
+        animador.andando();
+    }
+    if (moveHorizontal==0){
+            animador.parado();
+            
+    }
+    if(moveHorizontal>0){
+            flipScale.x  = 1;
+
+        }
+        if(moveHorizontal<0){
+           flipScale.x  = -1;
+            
+
+        }
+        transform.localScale = flipScale;
+    
     //   
         if(moveHorizontal>-0.5f && moveHorizontal<0.5 && jumping){
             if(rb2d.velocity.x!=0)
@@ -160,12 +190,14 @@ public class PlayerBehaviourScript : MonoBehaviour
 
         }
     }
+    
 
     void OnCollisionEnter2D(Collision2D collision){
        
         if(collision.gameObject.CompareTag("TAGchao")){
             Debug.Log("colidiu");
             jumping=true;
+            animador.chao();
         }    
     }
 
